@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "YouTubeFast",
+  "version": "1.0.0",
+  "description": "",
+  "content_scripts": [
+    {
+      "js": ["./Overlay/overlay.js"],
+      "css": ["./Overlay/overlay.css"],
+      "matches": ["https://*.youtube.com/*"]
+    }
+  ]
+}

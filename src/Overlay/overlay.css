@@ -1,0 +1,156 @@
+/* Copy of youtube overlay*/
+.ytp-autohide .overlay[type="show/hide"] {
+  opacity: 0;
+  -webkit-transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
+  transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
+}
+
+.overlay {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+
+  position: absolute;
+  z-index: 1000;
+
+  height: 37px;
+  border-radius: 8px;
+
+  background: rgba(0, 0, 0, 0.65);
+
+  color: white;
+  font-family: sans-serif;
+}
+
+.overlay[type="hide"] {
+  display: none;
+}
+
+.overlay[custom-style="numberOnly"] button {
+  display: none;
+}
+
+.overlay[position="topLeft"] {
+  top: 0;
+  left: 2%;
+}
+
+.overlay[position="topCenter"] {
+  top: 0;
+  inset: 0;
+  width: max-content;
+  margin: 0 auto;
+}
+
+.overlay[position="topRight"] {
+  top: 0;
+  right: 5%;
+}
+
+.overlay[position="bottomCenter"] {
+  width: max-content;
+  inset: calc(100% - 40px) 0 0 0;
+  margin: 0 auto;
+}
+
+.overlay[size="small"] {
+  height: 30px;
+  min-width: 50px;
+}
+
+.overlay[size="medium"] {
+  min-width: 60px;
+}
+
+.overlay[size="large"] {
+  min-width: 65px;
+}
+
+.overlay[size="small"] button {
+  width: 22.5px;
+}
+
+.overlay[size="medium"] button {
+  width: 25px;
+}
+
+.overlay[size="large"] button {
+  width: 30px;
+}
+
+.overlay[size="small"] .playbackRateDisplay {
+  font-size: 1.2rem;
+}
+
+.overlay[size="small"] .x {
+  font-size: 1.1rem;
+}
+
+.overlay[size="small"] button {
+  font-size: 18px;
+}
+
+.overlay[size="medium"] .playbackRateDisplay {
+  font-size: 1.3rem;
+}
+
+.overlay[size="medium"] .x {
+  font-size: 1.25rem;
+}
+
+.overlay[size="medium"] button {
+  font-size: 22px;
+}
+
+.overlay[size="large"] .playbackRateDisplay {
+  font-size: 1.5rem;
+}
+
+.overlay[size="large"] .x {
+  font-size: 1.3rem;
+}
+
+.overlay[size="large"] button {
+  font-size: 24px;
+}
+
+.playbackRateDisplay {
+  display: flex;
+  align-items: baseline;
+
+  margin: 0 5px;
+  font-family: sans-serif;
+}
+
+button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  height: 100%;
+  border: none;
+  border-radius: inherit;
+  outline: none;
+
+  font-family: sans-serif;
+  background: none;
+  color: white;
+
+  transition: transform 0.1s ease;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+button:active {
+  transform: translateY(1.25px);
+}
+
+button:focus-visible {
+  border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+.minus {
+  margin-bottom: 2px;
+}
