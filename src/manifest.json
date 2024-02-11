@@ -9,5 +9,6 @@
       "css": ["./Overlay/overlay.css"],
       "matches": ["https://*.youtube.com/*"]
     }
-  ]
+  ],
+  "options_page": "./options/options.html"
 }
