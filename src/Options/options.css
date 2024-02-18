@@ -88,7 +88,7 @@ input {
   font-size: 4rem;
 }
 
-@media screen and (min-width: 550px) {
+@media screen and (min-width: 560px) {
   .main-heading {
     font-size: 5rem;
   }
@@ -105,7 +105,7 @@ legend {
   font-size: 3.7rem;
 }
 
-@media screen and (min-width: 550px) {
+@media screen and (min-width: 560px) {
   legend {
     font-size: 4rem;
   }
@@ -125,7 +125,7 @@ label {
   font-size: 1.7rem;
 }
 
-@media screen and (min-width: 550px) {
+@media screen and (min-width: 560px) {
   label {
     font-size: 1.9rem;
   }
@@ -141,7 +141,7 @@ select {
   font-size: 1.5rem;
 }
 
-@media screen and (min-width: 550px) {
+@media screen and (min-width: 560px) {
   input,
   select {
     font-size: 1.7rem;
@@ -183,7 +183,7 @@ button:active {
   transform: translateY(1.25px);
 }
 
-@media screen and (min-width: 550px) {
+@media screen and (min-width: 560px) {
   button {
     font-size: 1.8rem;
   }
@@ -205,7 +205,7 @@ span {
   overflow: hidden;
 }
 
-@media screen and (min-width: 550px) {
+@media screen and (min-width: 560px) {
   span {
     font-size: 1.7rem;
   }
