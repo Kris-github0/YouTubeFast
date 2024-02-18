@@ -189,6 +189,11 @@ button:active {
   }
 }
 
+.saved {
+  background-color: rgb(89, 230, 89);
+  font-weight: 500;
+}
+
 span {
   width: 140px;
 

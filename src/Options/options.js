@@ -2,10 +2,12 @@
 const hotkeyInputs = document.querySelectorAll("input[type='text']");
 const hotkeysFieldset = document.getElementById("hotkeysFieldset");
 const restoreButton = document.getElementById("restoreButton");
+const saveButton = document.getElementById("saveButton");
 const form = document.querySelector("form");
 
 let scrollWheelDirection = "";
 let wheelEventEndTimeout = null;
+let savedTimeout = null;
 
 const HOTKEYS = {
   increaseSpeed: { currentlyPressed: [], updatable: true, hotkey: [], id: "1" },
@@ -96,6 +98,16 @@ form.addEventListener("submit", (e) => {
   };
 
   chrome.storage.local.set({ userSettings: userSettings });
+
+  saveButton.textContent = "Saved";
+  saveButton.classList.add("saved");
+
+  clearTimeout(savedTimeout);
+
+  savedTimeout = setTimeout(() => {
+    saveButton.textContent = "Save";
+    saveButton.classList.remove("saved");
+  }, 1250);
 
   e.preventDefault();
 });
