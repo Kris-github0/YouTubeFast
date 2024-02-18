@@ -2,18 +2,34 @@
 let currentKeysPressed = [];
 let scrollWheelDirection = null;
 let wheelEventEndTimeout = null;
+let settings;
 
-const settings = {
+const defaultSettings = {
   defaultSpeed: 1.0,
   stepChange: 0.25,
-  defaultHotkey: "ShiftE",
-  incrementHotkey: "ShiftWheelUp",
-  decrementHotkey: "ShiftWheelDown",
-  overlayStyle: "full",
-  overlayType: "show/hide",
+  increaseSpeed: ["Shift", "WheelUp"],
+  decreaseSpeed: ["Shift", "WheelDown"],
+  resetSpeed: ["Shift", "R"],
+  openSettingsPage: ["Shift", "S"],
+  overlayStyle: "normal",
+  overlayVisibility: "show/hide",
   overlayPosition: "topLeft",
   overlaySize: "medium",
 };
+
+chrome.storage.local.get(["userSettings"]).then((response) => {
+  if (response.userSettings === undefined) {
+    settings = defaultSettings;
+  } else {
+    settings = response.userSettings;
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+});
 
 //* Bezel Setup
 const bezel =
@@ -26,12 +42,6 @@ const bezelLeftArrow = `
 const bezelRightArrow = `
 <svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-59"></use><path class="ytp-svg-fill" d="M 10,24 18.5,18 10,12 V 24 z M 19,12 V 24 L 27.5,18 19,12 z" id="ytp-id-59"></path></svg>
 `;
-
-if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", start);
-} else {
-  start();
-}
 
 function start() {
   //* Overlay Setup
@@ -143,7 +153,12 @@ function start() {
 
     const userPressed = currentKeysPressed.join("");
 
-    if (userPressed === settings.incrementHotkey) {
+    if (userPressed === settings.openSettingsPage.join("")) {
+      chrome.runtime.sendMessage("openSettingsPage");
+      return;
+    }
+
+    if (userPressed === settings.increaseSpeed.join("")) {
       finalSpeed = sanitiseSpeed(finalSpeed + settings.stepChange);
       videoPlayer.playbackRate = finalSpeed;
 
@@ -152,7 +167,7 @@ function start() {
       showBezel();
     }
 
-    if (userPressed === settings.decrementHotkey) {
+    if (userPressed === settings.decreaseSpeed.join("")) {
       finalSpeed = sanitiseSpeed(finalSpeed - settings.stepChange);
       videoPlayer.playbackRate = finalSpeed;
 
@@ -161,7 +176,7 @@ function start() {
       showBezel();
     }
 
-    if (userPressed === settings.defaultHotkey) {
+    if (userPressed === settings.resetSpeed.join("")) {
       if (settings.defaultSpeed < finalSpeed) {
         updateBezelIcon(bezelLeftArrow);
       } else if (settings.defaultSpeed > finalSpeed) {
@@ -222,7 +237,7 @@ function createOverlay() {
   overlay.classList = "overlay";
   overlay.setAttribute("size", settings.overlaySize);
   overlay.setAttribute("custom-style", settings.overlayStyle);
-  overlay.setAttribute("type", settings.overlayType);
+  overlay.setAttribute("visibility", settings.overlayVisibility);
   overlay.setAttribute("position", settings.overlayPosition);
 
   overlay.innerHTML = `

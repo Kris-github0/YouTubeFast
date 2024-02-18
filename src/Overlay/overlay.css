@@ -1,5 +1,5 @@
 /* Copy of youtube overlay*/
-.ytp-autohide .overlay[type="show/hide"] {
+.ytp-autohide .overlay[visibility="show/hide"] {
   opacity: 0;
   -webkit-transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
   transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
@@ -22,7 +22,7 @@
   font-family: sans-serif;
 }
 
-.overlay[type="hide"] {
+.overlay[visibility="hide"] {
   display: none;
 }
 
