@@ -8,13 +8,13 @@ let scrollWheelDirection = "";
 let wheelEventEndTimeout = null;
 
 const HOTKEYS = {
-  increaseSpeed: { currentlyPressed: [], updatable: true, hotkey: "", id: "1" },
-  decreaseSpeed: { currentlyPressed: [], updatable: true, hotkey: "", id: "2" },
-  resetSpeed: { currentlyPressed: [], updatable: true, hotkey: "", id: "3" },
+  increaseSpeed: { currentlyPressed: [], updatable: true, hotkey: [], id: "1" },
+  decreaseSpeed: { currentlyPressed: [], updatable: true, hotkey: [], id: "2" },
+  resetSpeed: { currentlyPressed: [], updatable: true, hotkey: [], id: "3" },
   openSettingsPage: {
     currentlyPressed: [],
     updatable: true,
-    hotkey: "",
+    hotkey: [],
     id: "4",
   },
 };
@@ -22,10 +22,10 @@ const HOTKEYS = {
 const defaultSettings = {
   defaultSpeed: 1.0,
   stepChange: 0.25,
-  incrementHotkey: "ShiftWheelUp",
-  decrementHotkey: "ShiftWheelDown",
-  resetSpeed: "ShiftR",
-  openSettingsPage: "ShiftS",
+  increaseSpeed: ["Shift", "WheelUp"],
+  decreaseSpeed: ["Shift", "WheelDown"],
+  resetSpeed: ["Shift", "R"],
+  openSettingsPage: ["Shift", "S"],
   overlayStyle: "normal",
   overlayVisibility: "show/hide",
   overlayPosition: "topLeft",
@@ -33,10 +33,15 @@ const defaultSettings = {
 };
 
 //* Event Listeners
-document.addEventListener("DOMContentLoaded", setDefaults);
-
-restoreButton.addEventListener("click", setDefaults);
-form.addEventListener("submit", (e) => e.preventDefault());
+document.addEventListener("DOMContentLoaded", () => {
+  chrome.storage.local.get(["userSettings"]).then((response) => {
+    if (response.userSettings === undefined) {
+      applySettings(defaultSettings);
+    } else {
+      applySettings(response.userSettings);
+    }
+  });
+});
 
 hotkeysFieldset.addEventListener("keydown", down);
 hotkeysFieldset.addEventListener("keyup", up);
@@ -60,7 +65,9 @@ document.addEventListener("wheel", function r(e) {
   } else if (e.deltaY > 0) {
     scrollWheelDirection = "WheelDown";
   }
+
   clearTimeout(wheelEventEndTimeout);
+
   wheelEventEndTimeout = setTimeout(() => {
     down(element, scrollWheelDirection);
     if (scrollWheelDirection) {
@@ -70,27 +77,51 @@ document.addEventListener("wheel", function r(e) {
   }, 0);
 });
 
+restoreButton.addEventListener("click", () => {
+  applySettings(defaultSettings);
+});
+
+form.addEventListener("submit", (e) => {
+  const userSettings = {
+    defaultSpeed: Number(getFieldValue("defaultSpeed")),
+    stepChange: Number(getFieldValue("stepChange")),
+    increaseSpeed: HOTKEYS.increaseSpeed.hotkey,
+    decreaseSpeed: HOTKEYS.decreaseSpeed.hotkey,
+    resetSpeed: HOTKEYS.resetSpeed.hotkey,
+    openSettingsPage: HOTKEYS.openSettingsPage.hotkey,
+    overlayStyle: getFieldValue("overlayStyle"),
+    overlayVisibility: getFieldValue("overlayVisibility"),
+    overlayPosition: getFieldValue("overlayPosition"),
+    overlaySize: getFieldValue("overlaySize"),
+  };
+
+  chrome.storage.local.set({ userSettings: userSettings });
+
+  e.preventDefault();
+});
+
 //* Event Handlers
-function setDefaults() {
+function applySettings(settings) {
   document.getElementById("defaultSpeed").value =
-    defaultSettings.defaultSpeed.toFixed(2);
-  document.getElementById("stepChange").value = defaultSettings.stepChange;
-  HOTKEYS.increaseSpeed.hotkey = defaultSettings.incrementHotkey;
-  document.getElementById("1").textContent = "Shift + WheelUp";
-  document.getElementById("1").title = "Shift + WheelUp";
-  HOTKEYS.decreaseSpeed.hotkey = defaultSettings.decrementHotkey;
-  document.getElementById("2").textContent = "Shift + WheelDown";
-  document.getElementById("2").title = "Shift + WheelDown";
-  HOTKEYS.resetSpeed.hotkey = defaultSettings.resetSpeed;
-  document.getElementById("3").textContent = "Shift + R";
-  document.getElementById("3").title = "Shift + R";
-  HOTKEYS.openSettingsPage.hotkey = defaultSettings.openSettingsPage;
-  document.getElementById("4").textContent = "Shift + S";
-  document.getElementById("4").title = "Shift + S";
-  document.getElementById("overlayStyle").options[0].selected = true;
-  document.getElementById("overlayVisibility").options[1].selected = true;
-  document.getElementById("overlayPosition").options[0].selected = true;
-  document.getElementById("overlaySize").options[1].selected = true;
+    settings.defaultSpeed.toFixed(2);
+  document.getElementById("stepChange").value = settings.stepChange.toFixed(2);
+
+  HOTKEYS.increaseSpeed.hotkey = settings.increaseSpeed;
+  displayHotkeySetting(settings.increaseSpeed, "1");
+
+  HOTKEYS.decreaseSpeed.hotkey = settings.decreaseSpeed;
+  displayHotkeySetting(settings.decreaseSpeed, "2");
+
+  HOTKEYS.resetSpeed.hotkey = settings.resetSpeed;
+  displayHotkeySetting(settings.resetSpeed, "3");
+
+  HOTKEYS.openSettingsPage.hotkey = settings.openSettingsPage;
+  displayHotkeySetting(settings.openSettingsPage, "4");
+
+  displayOverlaySetting(settings.overlayStyle, "overlayStyle");
+  displayOverlaySetting(settings.overlayVisibility, "overlayVisibility");
+  displayOverlaySetting(settings.overlayPosition, "overlayPosition");
+  displayOverlaySetting(settings.overlaySize, "overlaySize");
 }
 
 function clearCurrentlyPressed(e) {
@@ -101,7 +132,8 @@ function clearCurrentlyPressed(e) {
 function down(e, scrollWheelDirection) {
   let element;
   const keyCall = e.target;
-  const IGNORE_KEY = e.key === "Tab" || e.key === "CapsLock";
+  const IGNORE_KEY =
+    e.key === "Tab" || e.key === "CapsLock" || e.key === "Enter";
 
   if (keyCall) {
     element = e.target;
@@ -115,9 +147,7 @@ function down(e, scrollWheelDirection) {
   }
 
   if (e.key === "Backspace") {
-    clearCurrentlyPressed(e);
-    HOTKEYS[element.id]["hotkey"] = "";
-    document.getElementById(HOTKEYS[element.id]["id"]).textContent = "";
+    clearField(e);
     return;
   }
 
@@ -128,9 +158,9 @@ function down(e, scrollWheelDirection) {
   // Keyboard handler
   if (
     e.key &&
-    !HOTKEYS[element.id]["currentlyPressed"].includes(convert(e.key))
+    !HOTKEYS[element.id]["currentlyPressed"].includes(convertKey(e.key))
   ) {
-    HOTKEYS[element.id]["currentlyPressed"].push(convert(e.key));
+    HOTKEYS[element.id]["currentlyPressed"].push(convertKey(e.key));
   }
 
   // Scroll wheel handler
@@ -145,31 +175,19 @@ function down(e, scrollWheelDirection) {
     }
   }
 
-  // Update visual and obj
-  if (HOTKEYS[element.id]["currentlyPressed"].length === 1) {
-    document.getElementById(HOTKEYS[element.id]["id"]).textContent =
-      HOTKEYS[element.id]["currentlyPressed"].join("");
-    document.getElementById(HOTKEYS[element.id]["id"]).title =
-      HOTKEYS[element.id]["currentlyPressed"].join("");
-
-    HOTKEYS[element.id]["hotkey"] =
-      HOTKEYS[element.id]["currentlyPressed"].join("");
-  }
-  if (HOTKEYS[element.id]["currentlyPressed"].length === 2) {
-    HOTKEYS[element.id]["updatable"] = false;
-    document.getElementById(HOTKEYS[element.id]["id"]).textContent =
-      HOTKEYS[element.id]["currentlyPressed"].join(" + ");
-    document.getElementById(HOTKEYS[element.id]["id"]).title =
-      HOTKEYS[element.id]["currentlyPressed"].join(" + ");
-
-    HOTKEYS[element.id]["hotkey"] =
-      HOTKEYS[element.id]["currentlyPressed"].join("");
-  }
-
-  // Disallow 3 or more
   if (HOTKEYS[element.id]["currentlyPressed"].length > 2) {
     HOTKEYS[element.id]["currentlyPressed"].pop();
     return;
+  }
+
+  HOTKEYS[element.id]["hotkey"] = HOTKEYS[element.id]["currentlyPressed"];
+  displayHotkeySetting(
+    HOTKEYS[element.id]["currentlyPressed"],
+    HOTKEYS[element.id]["id"]
+  );
+
+  if (HOTKEYS[element.id]["currentlyPressed"].length === 2) {
+    HOTKEYS[element.id]["updatable"] = false;
   }
 
   removeDuplicates(element);
@@ -179,11 +197,11 @@ function up(e, el) {
   // Keyboard handler
   if (
     e.key &&
-    HOTKEYS[e.target.id]["currentlyPressed"].includes(convert(e.key))
+    HOTKEYS[e.target.id]["currentlyPressed"].includes(convertKey(e.key))
   ) {
     HOTKEYS[e.target.id]["currentlyPressed"] = HOTKEYS[e.target.id][
       "currentlyPressed"
-    ].filter((i) => i !== convert(e.key));
+    ].filter((i) => i !== convertKey(e.key));
   }
 
   // Scroll wheel handler
@@ -197,20 +215,37 @@ function up(e, el) {
 }
 
 //* Utility Functions
-function removeDuplicates(inputEl) {
-  for (const hotkey in HOTKEYS) {
-    if (
-      HOTKEYS[hotkey]["hotkey"].toLowerCase() ===
-        HOTKEYS[inputEl.id]["hotkey"].toLowerCase() &&
-      HOTKEYS[hotkey]["id"] !== HOTKEYS[inputEl.id]["id"]
-    ) {
-      document.getElementById(HOTKEYS[hotkey]["id"]).textContent = "";
-      HOTKEYS[hotkey]["hotkey"] = "";
+function displayOverlaySetting(value, id) {
+  const el = document.getElementById(id);
+
+  for (const option of el.options) {
+    if (option.value === value) {
+      option.selected = true;
+      return;
     }
   }
 }
 
-function convert(key) {
+function displayHotkeySetting(hotkey, id) {
+  const el = document.getElementById(id);
+  el.textContent = formatHotkey(hotkey);
+  el.title = formatHotkey(hotkey);
+}
+
+function removeDuplicates(inputEl) {
+  for (const hotkey in HOTKEYS) {
+    if (
+      HOTKEYS[hotkey]["hotkey"].join("").toLowerCase() ===
+        HOTKEYS[inputEl.id]["hotkey"].join("").toLowerCase() &&
+      HOTKEYS[hotkey]["id"] !== HOTKEYS[inputEl.id]["id"]
+    ) {
+      document.getElementById(HOTKEYS[hotkey]["id"]).textContent = "";
+      HOTKEYS[hotkey]["hotkey"] = [];
+    }
+  }
+}
+
+function convertKey(key) {
   if (key === "Control") {
     return "Ctrl";
   }
@@ -220,4 +255,26 @@ function convert(key) {
   }
 
   return key;
+}
+
+function formatHotkey(hotkey) {
+  if (hotkey.length === 2) {
+    return hotkey.join(" + ");
+  }
+
+  if (hotkey.length === 1) {
+    return hotkey.join("");
+  }
+
+  return "";
+}
+
+function getFieldValue(id) {
+  return document.getElementById(id).value;
+}
+
+function clearField(e) {
+  clearCurrentlyPressed(e);
+  HOTKEYS[e.target.id]["hotkey"] = [];
+  document.getElementById(HOTKEYS[e.target.id]["id"]).textContent = "";
 }

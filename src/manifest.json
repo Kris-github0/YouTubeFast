@@ -3,6 +3,7 @@
   "name": "YouTubeFast",
   "version": "1.0.0",
   "description": "",
+  "permissions": ["storage"],
   "content_scripts": [
     {
       "js": ["./Overlay/overlay.js"],
