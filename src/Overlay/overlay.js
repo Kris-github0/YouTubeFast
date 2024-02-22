@@ -3,6 +3,7 @@ let currentKeysPressed = [];
 let scrollWheelDirection = null;
 let wheelEventEndTimeout = null;
 let settings;
+let videoPlayerReadyInterval;
 
 const defaultSettings = {
   defaultSpeed: 1.0,
@@ -24,24 +25,18 @@ chrome.storage.local.get(["userSettings"]).then((response) => {
     settings = response.userSettings;
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", start);
-  } else {
-    start();
-  }
-});
+  videoPlayerReadyInterval = setInterval(function () {
+    if (String(window.location).includes("watch?v=")) {
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", start);
+      } else {
+        start();
+      }
 
-//* Bezel Setup
-const bezel =
-  document.querySelector(".ytp-bezel-text").parentElement.parentElement;
-const bezelIcon = document.querySelector(".ytp-bezel-icon");
-const bezelText = document.querySelector(".ytp-bezel-text");
-let bezelTimeout;
-const bezelLeftArrow = `
-<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-62"></use><path class="ytp-svg-fill" d="M 17,24 V 12 l -8.5,6 8.5,6 z m .5,-6 8.5,6 V 12 l -8.5,6 z" id="ytp-id-62"></path></svg>`;
-const bezelRightArrow = `
-<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-59"></use><path class="ytp-svg-fill" d="M 10,24 18.5,18 10,12 V 24 z M 19,12 V 24 L 27.5,18 19,12 z" id="ytp-id-59"></path></svg>
-`;
+      clearInterval(videoPlayerReadyInterval);
+    }
+  }, 500);
+});
 
 function start() {
   //* Overlay Setup
@@ -57,6 +52,18 @@ function start() {
   let initialSpeed = settings.defaultSpeed;
   let finalSpeed = initialSpeed;
   videoPlayer.playbackRate = finalSpeed;
+
+  //* Bezel Setup
+  const bezel =
+    document.querySelector(".ytp-bezel-text").parentElement.parentElement;
+  const bezelIcon = document.querySelector(".ytp-bezel-icon");
+  const bezelText = document.querySelector(".ytp-bezel-text");
+  let bezelTimeout;
+  const bezelLeftArrow = `
+<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-62"></use><path class="ytp-svg-fill" d="M 17,24 V 12 l -8.5,6 8.5,6 z m .5,-6 8.5,6 V 12 l -8.5,6 z" id="ytp-id-62"></path></svg>`;
+  const bezelRightArrow = `
+<svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-59"></use><path class="ytp-svg-fill" d="M 10,24 18.5,18 10,12 V 24 z M 19,12 V 24 L 27.5,18 19,12 z" id="ytp-id-59"></path></svg>
+`;
 
   //* Event Listeners
   decrementButton.addEventListener("click", () => {
@@ -155,6 +162,11 @@ function start() {
 
     if (userPressed === settings.openSettingsPage.join("")) {
       chrome.runtime.sendMessage("openSettingsPage");
+      return;
+    }
+
+    // Prevent speed change when no video
+    if (!document.getElementsByTagName("video")[0].src) {
       return;
     }
 
