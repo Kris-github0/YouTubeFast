@@ -83,7 +83,17 @@ input {
   margin: 0 auto;
 }
 
+img {
+  margin-bottom: 5px;
+}
+
+.main-heading-container {
+  margin-bottom: 40px;
+}
+
 .main-heading {
+  color: rgb(25, 25, 25);
+  text-align: center;
   font-weight: 800;
   font-size: 4rem;
 }
@@ -167,6 +177,7 @@ input[type="number"]:focus-visible:invalid {
   max-width: 240px;
   margin-left: 2px;
   margin-top: 70px;
+  margin-bottom: 5px;
 }
 
 button {
