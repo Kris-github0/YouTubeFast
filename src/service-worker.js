@@ -19,7 +19,6 @@ chrome.action.onClicked.addListener(async () => {
     } else {
       window.open(chrome.runtime.getURL("./options/options.html"));
     }
-  } else {
   }
 });
 
