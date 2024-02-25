@@ -65,6 +65,8 @@ function start() {
 <svg height="100%" version="1.1" viewBox="0 0 36 36" width="100%"><use class="ytp-svg-shadow" xlink:href="#ytp-id-59"></use><path class="ytp-svg-fill" d="M 10,24 18.5,18 10,12 V 24 z M 19,12 V 24 L 27.5,18 19,12 z" id="ytp-id-59"></path></svg>
 `;
 
+  let videoUrl = window.location.href;
+
   //* Event Listeners
   decrementButton.addEventListener("click", () => {
     finalSpeed = sanitiseSpeed(finalSpeed - settings.stepChange);
@@ -98,8 +100,12 @@ function start() {
   // On video change, reset speed to settings default.
   const observer = new MutationObserver((changes) => {
     changes.forEach((change) => {
-      if (change.attributeName.includes("src")) {
+      if (
+        change.attributeName.includes("src") &&
+        videoUrl !== window.location.href
+      ) {
         videoPlayer.playbackRate = initialSpeed;
+        videoUrl = window.location.href;
       }
     });
   });
