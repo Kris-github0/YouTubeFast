@@ -1,11 +1,11 @@
 /* Copy of youtube overlay*/
-.ytp-autohide .overlay[visibility="show/hide"] {
+.ytp-autohide .ytf-overlay[visibility="show/hide"] {
   opacity: 0;
   -webkit-transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
   transition: opacity 0.1s cubic-bezier(0.4, 0, 1, 1);
 }
 
-.overlay {
+.ytf-overlay {
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -22,95 +22,95 @@
   font-family: sans-serif;
 }
 
-.overlay[visibility="hide"] {
+.ytf-overlay[visibility="hide"] {
   display: none;
 }
 
-.overlay[custom-style="numberOnly"] button {
+.ytf-overlay[custom-style="numberOnly"] button {
   display: none;
 }
 
-.overlay[position="topLeft"] {
+.ytf-overlay[position="topLeft"] {
   top: 0;
   left: 2%;
 }
 
-.overlay[position="topCenter"] {
+.ytf-overlay[position="topCenter"] {
   top: 0;
   inset: 0;
   width: max-content;
   margin: 0 auto;
 }
 
-.overlay[position="topRight"] {
+.ytf-overlay[position="topRight"] {
   top: 0;
   right: 5%;
 }
 
-.overlay[position="bottomCenter"] {
+.ytf-overlay[position="bottomCenter"] {
   width: max-content;
   inset: calc(100% - 40px) 0 0 0;
   margin: 0 auto;
 }
 
-.overlay[size="small"] {
+.ytf-overlay[size="small"] {
   height: 30px;
   min-width: 50px;
 }
 
-.overlay[size="medium"] {
+.ytf-overlay[size="medium"] {
   min-width: 60px;
 }
 
-.overlay[size="large"] {
+.ytf-overlay[size="large"] {
   min-width: 65px;
 }
 
-.overlay[size="small"] button {
+.ytf-overlay[size="small"] button {
   width: 22.5px;
 }
 
-.overlay[size="medium"] button {
+.ytf-overlay[size="medium"] button {
   width: 25px;
 }
 
-.overlay[size="large"] button {
+.ytf-overlay[size="large"] button {
   width: 30px;
 }
 
-.overlay[size="small"] .playbackRateDisplay {
+.ytf-overlay[size="small"] .playbackRateDisplay {
   font-size: 1.2rem;
 }
 
-.overlay[size="small"] .x {
+.ytf-overlay[size="small"] .x {
   font-size: 1.1rem;
 }
 
-.overlay[size="small"] button {
+.ytf-overlay[size="small"] button {
   font-size: 18px;
 }
 
-.overlay[size="medium"] .playbackRateDisplay {
+.ytf-overlay[size="medium"] .playbackRateDisplay {
   font-size: 1.3rem;
 }
 
-.overlay[size="medium"] .x {
+.ytf-overlay[size="medium"] .x {
   font-size: 1.25rem;
 }
 
-.overlay[size="medium"] button {
+.ytf-overlay[size="medium"] button {
   font-size: 22px;
 }
 
-.overlay[size="large"] .playbackRateDisplay {
+.ytf-overlay[size="large"] .playbackRateDisplay {
   font-size: 1.5rem;
 }
 
-.overlay[size="large"] .x {
+.ytf-overlay[size="large"] .x {
   font-size: 1.3rem;
 }
 
-.overlay[size="large"] button {
+.ytf-overlay[size="large"] button {
   font-size: 24px;
 }
 

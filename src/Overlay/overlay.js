@@ -252,7 +252,7 @@ function start() {
 
 function createOverlay() {
   const overlay = document.createElement("div");
-  overlay.classList = "overlay";
+  overlay.classList = "ytf-overlay";
   overlay.setAttribute("size", settings.overlaySize);
   overlay.setAttribute("custom-style", settings.overlayStyle);
   overlay.setAttribute("visibility", settings.overlayVisibility);
