@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "YouTubeFast",
   "version": "1.0.0",
-  "description": "",
+  "description": "YouTube playback speed controller that lets you experience more in less time. YouTubeFast, your time is valuable.",
   "permissions": ["storage", "activeTab"],
   "action": {},
   "icons": {
